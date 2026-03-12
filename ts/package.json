@@ -1,0 +1,26 @@
+{
+  "name": "@plasma/privacy-stealth-sdk",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-concurrency=1 --experimental-strip-types test/stealth.unit.test.ts",
+    "test:e2e": "node --test --test-concurrency=1 --experimental-strip-types test/stealth.e2e.test.ts",
+    "full-test": "node --experimental-strip-types scripts/full-flow-test.ts",
+    "derive-keys": "node --experimental-strip-types src/cli.ts derive-keys",
+    "lifecycle-demo": "node --experimental-strip-types src/cli.ts lifecycle-demo"
+  },
+  "dependencies": {
+    "@noble/curves": "^1.4.0",
+    "@noble/hashes": "^1.4.0",
+    "viem": "^2.21.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
