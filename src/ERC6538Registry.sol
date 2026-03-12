@@ -5,13 +5,8 @@ pragma solidity ^0.8.20;
 /// @notice Users register their stealth meta-address (spending pubkey + viewing pubkey).
 ///         Senders look up the recipient's meta-address to generate one-time stealth addresses.
 contract ERC6538Registry {
-
     /// @notice Emitted when a user registers or updates their stealth meta-address.
-    event StealthMetaAddressSet(
-        address indexed registrant,
-        uint256 indexed schemeId,
-        bytes stealthMetaAddress
-    );
+    event StealthMetaAddressSet(address indexed registrant, uint256 indexed schemeId, bytes stealthMetaAddress);
 
     error UnsupportedScheme(uint256 schemeId);
     error InvalidMetaAddressLength(uint256 expected, uint256 actual);
@@ -38,10 +33,7 @@ contract ERC6538Registry {
     /// @param registrant  The user whose meta-address to look up
     /// @param schemeId  The scheme identifier
     /// @return The stealth meta-address, or empty bytes if not registered
-    function stealthMetaAddressOf(
-        address registrant,
-        uint256 schemeId
-    ) external view returns (bytes memory) {
+    function stealthMetaAddressOf(address registrant, uint256 schemeId) external view returns (bytes memory) {
         return _stealthMetaAddresses[registrant][schemeId];
     }
 }

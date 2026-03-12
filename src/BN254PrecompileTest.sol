@@ -6,7 +6,6 @@ pragma solidity ^0.8.20;
 ///         These are required for Groth16 ZK proof verification.
 ///         If any of these fail on Plasma, the privacy pool cannot work.
 contract BN254PrecompileTest {
-
     // BN254 curve generator point G1
     uint256 constant G1_X = 1;
     uint256 constant G1_Y = 2;
@@ -78,11 +77,19 @@ contract BN254PrecompileTest {
         // Pairing check: e(G1, G2) * e(-G1, G2) should equal 1 (identity)
         bytes memory input = abi.encodePacked(
             // First pair: (G1, G2)
-            G1_X, G1_Y,
-            G2_X2, G2_X1, G2_Y2, G2_Y1,
+            G1_X,
+            G1_Y,
+            G2_X2,
+            G2_X1,
+            G2_Y2,
+            G2_Y1,
             // Second pair: (-G1, G2)
-            G1_X, negG1Y,
-            G2_X2, G2_X1, G2_Y2, G2_Y1
+            G1_X,
+            negG1Y,
+            G2_X2,
+            G2_X1,
+            G2_Y2,
+            G2_Y1
         );
 
         (bool success, bytes memory result) = address(0x08).staticcall(input);
@@ -103,11 +110,7 @@ contract BN254PrecompileTest {
     }
 
     /// @notice Get gas cost for each precompile (for benchmarking)
-    function benchmarkGas() external view returns (
-        uint256 ecAddGas,
-        uint256 ecMulGas,
-        uint256 ecPairingGas
-    ) {
+    function benchmarkGas() external view returns (uint256 ecAddGas, uint256 ecMulGas, uint256 ecPairingGas) {
         uint256 g;
 
         // ecAdd gas
@@ -122,10 +125,8 @@ contract BN254PrecompileTest {
 
         // ecPairing gas (2 pairs — minimal)
         uint256 negG1Y = P - G1_Y;
-        bytes memory pairingInput = abi.encodePacked(
-            G1_X, G1_Y, G2_X2, G2_X1, G2_Y2, G2_Y1,
-            G1_X, negG1Y, G2_X2, G2_X1, G2_Y2, G2_Y1
-        );
+        bytes memory pairingInput =
+            abi.encodePacked(G1_X, G1_Y, G2_X2, G2_X1, G2_Y2, G2_Y1, G1_X, negG1Y, G2_X2, G2_X1, G2_Y2, G2_Y1);
         g = gasleft();
         address(0x08).staticcall(pairingInput);
         ecPairingGas = g - gasleft();
@@ -135,10 +136,11 @@ contract BN254PrecompileTest {
     // Internal helpers
     // ============================================================
 
-    function ecAdd(
-        uint256 x1, uint256 y1,
-        uint256 x2, uint256 y2
-    ) internal view returns (uint256 rx, uint256 ry, bool success) {
+    function ecAdd(uint256 x1, uint256 y1, uint256 x2, uint256 y2)
+        internal
+        view
+        returns (uint256 rx, uint256 ry, bool success)
+    {
         bytes memory input = abi.encode(x1, y1, x2, y2);
         (bool ok, bytes memory result) = address(0x06).staticcall(input);
         if (ok && result.length == 64) {
@@ -147,9 +149,7 @@ contract BN254PrecompileTest {
         }
     }
 
-    function ecMul(
-        uint256 x, uint256 y, uint256 s
-    ) internal view returns (uint256 rx, uint256 ry, bool success) {
+    function ecMul(uint256 x, uint256 y, uint256 s) internal view returns (uint256 rx, uint256 ry, bool success) {
         bytes memory input = abi.encode(x, y, s);
         (bool ok, bytes memory result) = address(0x07).staticcall(input);
         if (ok && result.length == 64) {

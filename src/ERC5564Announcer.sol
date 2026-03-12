@@ -5,7 +5,6 @@ pragma solidity ^0.8.20;
 /// @notice Emits announcements when funds are sent to stealth addresses.
 ///         Receivers scan these events using their viewing key to detect incoming payments.
 contract ERC5564Announcer {
-
     /// @notice Emitted when a sender sends funds to a stealth address.
     /// @param schemeId  Identifier for the stealth address scheme (1 = secp256k1)
     /// @param stealthAddress  The one-time stealth address that received funds
@@ -32,12 +31,9 @@ contract ERC5564Announcer {
     /// @param stealthAddress  The generated one-time address
     /// @param ephemeralPubKey  The ephemeral public key (33 bytes compressed)
     /// @param metadata  First byte = view tag for fast scanning, rest = optional metadata
-    function announce(
-        uint256 schemeId,
-        address stealthAddress,
-        bytes memory ephemeralPubKey,
-        bytes memory metadata
-    ) external {
+    function announce(uint256 schemeId, address stealthAddress, bytes memory ephemeralPubKey, bytes memory metadata)
+        external
+    {
         if (schemeId != SCHEME_SECP256K1) revert UnsupportedScheme(schemeId);
         if (ephemeralPubKey.length != COMPRESSED_PUBKEY_LENGTH) {
             revert InvalidEphemeralPubKeyLength(COMPRESSED_PUBKEY_LENGTH, ephemeralPubKey.length);

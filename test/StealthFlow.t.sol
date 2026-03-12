@@ -51,9 +51,7 @@ contract StealthFlowTest is Test {
     }
 
     function test_RevertOnUnsupportedRegistryScheme() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(ERC6538Registry.UnsupportedScheme.selector, 999)
-        );
+        vm.expectRevert(abi.encodeWithSelector(ERC6538Registry.UnsupportedScheme.selector, 999));
         vm.prank(alice);
         registry.registerKeys(999, _validMetaAddress());
     }
@@ -61,13 +59,7 @@ contract StealthFlowTest is Test {
     function test_RevertOnMalformedMetaAddress() public {
         bytes memory malformed = abi.encodePacked(bytes1(0x02), bytes32(uint256(1)));
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ERC6538Registry.InvalidMetaAddressLength.selector,
-                66,
-                malformed.length
-            )
-        );
+        vm.expectRevert(abi.encodeWithSelector(ERC6538Registry.InvalidMetaAddressLength.selector, 66, malformed.length));
         vm.prank(alice);
         registry.registerKeys(1, malformed);
     }
@@ -77,22 +69,14 @@ contract StealthFlowTest is Test {
         bytes memory metadata = hex"e8";
 
         vm.expectEmit(address(announcer));
-        emit Announcement(
-            1,
-            stealthAddress,
-            sender,
-            ephemeralPubKey,
-            metadata
-        );
+        emit Announcement(1, stealthAddress, sender, ephemeralPubKey, metadata);
 
         vm.prank(sender);
         announcer.announce(1, stealthAddress, ephemeralPubKey, metadata);
     }
 
     function test_RevertOnUnsupportedAnnouncementScheme() public {
-        vm.expectRevert(
-            abi.encodeWithSelector(ERC5564Announcer.UnsupportedScheme.selector, 999)
-        );
+        vm.expectRevert(abi.encodeWithSelector(ERC5564Announcer.UnsupportedScheme.selector, 999));
         vm.prank(sender);
         announcer.announce(999, stealthAddress, _validEphemeralPubKey(), hex"aa");
     }
@@ -101,11 +85,7 @@ contract StealthFlowTest is Test {
         bytes memory malformed = hex"0211";
 
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ERC5564Announcer.InvalidEphemeralPubKeyLength.selector,
-                33,
-                malformed.length
-            )
+            abi.encodeWithSelector(ERC5564Announcer.InvalidEphemeralPubKeyLength.selector, 33, malformed.length)
         );
         vm.prank(sender);
         announcer.announce(1, stealthAddress, malformed, hex"aa");
